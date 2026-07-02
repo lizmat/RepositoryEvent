@@ -4,7 +4,7 @@ use RepositoryEvent;
 use JSON::Fast;
 use JSON::RepositoryEvent;
 
-plan 32;
+plan 42;
 
 for <Github 5 Forgejo 3> -> $type, $modified {
     my $io = $*PROGRAM.parent.sibling("samples").add("$type.lc()-push.json");
@@ -21,7 +21,16 @@ for <Github 5 Forgejo 3> -> $type, $modified {
     ok $event.^name.starts-with("RepositoryEvent::"),
       "$type: got a RepositoryEvent::xxx object";
 
+    is $event.repo-name, 'JSON-RepositoryEvent',
+      "$type: repository name is ok";
+    is $event.repo-full-name, 'lizmat/JSON-RepositoryEvent',
+      "$type: repository full-name is ok";
+    is $event.repo-stars, 1, "$type: is number of stars correct";
+    is $event.repo-issues, 1, "$type: is number of issues correct";
+
     is $event.branch, "main", "$type: the right branch in event";
+    ok $event.compare-url.starts-with('https://'),
+      "$type: compare URL looks ok";
 
     my @commits := $event.commits;
     is +@commits, 1, "$type: was there only one commit";

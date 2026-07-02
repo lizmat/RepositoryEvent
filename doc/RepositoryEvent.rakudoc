@@ -41,9 +41,13 @@ class, attempting to unify the information provided by different services
 
 Representing the push of one or more commits to a service.
 
-=head3 compare-url
 =head3 branch
 =head3 commits
+=head3 compare-url
+=head3 repo-name
+=head3 repo-full-name
+=head3 repo-stars
+=head3 repo-issues
 
 =head1 AUTHOR
 

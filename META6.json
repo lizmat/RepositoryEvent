@@ -3,8 +3,6 @@
   "authors": [
     "Elizabeth Mattijsen"
   ],
-  "build-depends": [
-  ],
   "depends": {
     "test": {
       "requires": [
@@ -20,14 +18,14 @@
     "RepositoryEvent": "lib/RepositoryEvent.rakumod"
   },
   "raku": "6.d",
-  "resources": [
-  ],
-  "source-url": "https://codeberg.org/lizmat/RepositoryEvent.git",
+  "support": {
+    "bugtracker": "https://codeberg.org/lizmat/RepositoryEvent/issues",
+    "email": "liz@raku.rocks",
+    "source": "https://codeberg.org/lizmat/RepositoryEvent.git"
+  },
   "tags": [
     "REPOSITORY",
     "EVENT"
-  ],
-  "test-depends": [
   ],
   "version": "0.0.1"
 }

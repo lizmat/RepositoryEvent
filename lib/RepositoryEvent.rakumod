@@ -6,7 +6,7 @@ my constant %can-be-simplified = <
   JSON::RepositoryEvent::Forgejo::EventDelete       delete
   JSON::RepositoryEvent::Forgejo::EventFork         fork
   JSON::RepositoryEvent::Forgejo::EventIssues       issues
-  JSON::RepositoryEvent::Forgejo::EventPullRequest  pullrequest
+  JSON::RepositoryEvent::Forgejo::EventPullRequest  pull-request
   JSON::RepositoryEvent::Forgejo::EventPush         push
 
   JSON::RepositoryEvent::GitHub::EventCheckSuite    check-suite
@@ -20,6 +20,15 @@ my constant %can-be-simplified = <
   JSON::RepositoryEvent::GitHub::EventPullRequest   pull-request
   JSON::RepositoryEvent::GitHub::EventPush          push
 >;
+
+#- RepositoryEvent::Basics -----------------------------------------------------
+
+my role Basics {
+    has $.repo-name;
+    has $.repo-full-name;
+    has $.repo-stars;
+    has $.repo-issues;
+}
 
 #- RepositoryEvent::Commit -----------------------------------------------------
 my class Commit {
@@ -41,7 +50,7 @@ my class Commit {
 }
 
 #- RepositoryEvent::Issues -----------------------------------------------------
-class Issues {
+class Issues does Basics {
     has $.action;
     has $.sender;
     has $.assignee;
@@ -51,7 +60,8 @@ class Issues {
 }
 
 #- RepositoryEvent::PullRequest ------------------------------------------------
-class PullRequest {
+class PullRequest does Basics {
+    has $.action;
     has $.number;
     has $.url;
     has $.title;
@@ -59,7 +69,7 @@ class PullRequest {
 }
 
 #- RepositoryEvent::Push -------------------------------------------------------
-my class Push {
+my class Push does Basics {
     has $.compare-url;
     has $.branch;
     has @.commits;
@@ -78,14 +88,29 @@ method new($event) {
     }
 }
 
-method !push($event, $forgejo) {
+method !basics($event, $forgejo) {
+    my $repository := $event.repository;
+
     my %args;
+
+    %args<repo-name>      := $repository.name;
+    %args<repo-full-name> := $repository.full-name;
+    %args<repo-stars>     := $forgejo
+                               ?? $repository.stars-count
+                               !! $repository.stargazers-count;
+    %args<repo-issues>    := $repository.open-issues-count;
+
+    %args
+}
+
+method !push($event, $forgejo) {
+    my %args := self!basics($event, $forgejo);
 
     my $repository := $event.repository;
     my $branch     := $event.ref.subst('refs/heads/');
 
-    %args<compare-url> := $forgejo ?? $event.compare-url !! $event.compare;
     %args<branch>      := $branch;
+    %args<compare-url> := $forgejo ?? $event.compare-url !! $event.compare;
 
     %args<commits> := eager $event.commits.map: -> $commit {
         my @lines  = $commit.message.lines;
@@ -108,6 +133,19 @@ method !push($event, $forgejo) {
     }
 
     Push.new(|%args)
+}
+
+method !pull-request($event, $forgejo) {
+    my %args := self!basics($event, $forgejo);
+
+    my $pull-request := $event.pull-request;
+
+    %args<sender> := $event.sender.login;
+    %args<number> := $pull-request.number;
+    %args<url>    := $pull-request.html-url;
+    %args<title>  := $pull-request.title;
+
+    PullRequest.new(|%args)
 }
 
 # vim: expandtab shiftwidth=4
