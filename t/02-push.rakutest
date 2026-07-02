@@ -1,0 +1,49 @@
+use Test;
+use RepositoryEvent;
+
+use JSON::Fast;
+use JSON::RepositoryEvent;
+
+plan 32;
+
+for <Github 5 Forgejo 3> -> $type, $modified {
+    my $io = $*PROGRAM.parent.sibling("samples").add("$type.lc()-push.json");
+
+    my $raw = JSON::RepositoryEvent(from-json $io.slurp);
+    isa-ok $raw, JSON::RepositoryEvent,
+      "$type: got a JSON::RepositoryEvent object";
+
+    my $payload = $raw.payload;
+    ok $payload.^name.starts-with("JSON::RepositoryEvent::"),
+      "$type: got a JSON::RepositoryEvent::xxx object";
+    
+    my $event = RepositoryEvent.new($payload);
+    ok $event.^name.starts-with("RepositoryEvent::"),
+      "$type: got a RepositoryEvent::xxx object";
+
+    is $event.branch, "main", "$type: the right branch in event";
+
+    my @commits := $event.commits;
+    is +@commits, 1, "$type: was there only one commit";
+
+    my $commit := @commits.head;
+    cmp-ok $commit.sha.chars, '==', 40, "$type: do we have a SHA";
+    is $commit.branch, "main", "$type: the right branch in commit";
+
+    ok $commit.url.starts-with('https://'), "$type: do we have a URL";
+
+    ok $commit.title.chars, "$type: do we have a title";
+    ok $commit.message.chars, "$type: do we have a message";
+    
+    is $commit.author, 'Elizabeth Mattijsen',
+      "$type: did we get the correct author";
+    is $commit.committer, 'Elizabeth Mattijsen',
+      "$type: did we get the correct committer";
+
+    is-deeply +$commit.added, 0, "$type: no files added";
+    is-deeply +$commit.modified, +$modified, "$type: $modified files modified";
+    is-deeply +$commit.removed, 0, "$type: no files removed";
+    is-deeply +$commit.files, +$modified, "$type: $modified files affected";
+}
+
+# vim: expandtab shiftwidth=4

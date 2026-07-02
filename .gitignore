@@ -1,0 +1,4 @@
+.precomp/
+/RepositoryEvent-*
+/releases
+*.rakucov

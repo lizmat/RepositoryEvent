@@ -1,0 +1,33 @@
+{
+  "auth": "zef:lizmat",
+  "authors": [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends": [
+  ],
+  "depends": {
+    "test": {
+      "requires": [
+        "JSON::Fast:ver<0.20.1+>:auth<zef:timo>",
+        "JSON::RepositoryEvent:ver<0.0.3+>:auth<zef:lizmat>"
+      ]
+    }
+  },
+  "description": "Simplified interface for repository events",
+  "license": "Artistic-2.0",
+  "name": "RepositoryEvent",
+  "provides": {
+    "RepositoryEvent": "lib/RepositoryEvent.rakumod"
+  },
+  "raku": "6.d",
+  "resources": [
+  ],
+  "source-url": "https://codeberg.org/lizmat/RepositoryEvent.git",
+  "tags": [
+    "REPOSITORY",
+    "EVENT"
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}
