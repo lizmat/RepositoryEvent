@@ -4,7 +4,7 @@ use RepositoryEvent;
 use JSON::Fast;
 use JSON::RepositoryEvent;
 
-plan 42;
+plan 24;
 
 my $samples = $*PROGRAM.parent.sibling("samples");
 
