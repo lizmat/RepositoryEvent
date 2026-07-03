@@ -9,7 +9,7 @@
     "test": {
       "requires": [
         "JSON::Fast:ver<0.20.1+>:auth<zef:timo>",
-        "JSON::RepositoryEvent:ver<0.0.4+>:auth<zef:lizmat>"
+        "JSON::RepositoryEvent:ver<0.0.5+>:auth<zef:lizmat>"
       ]
     }
   },

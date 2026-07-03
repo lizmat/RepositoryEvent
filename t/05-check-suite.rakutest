@@ -1,0 +1,40 @@
+use Test;
+use RepositoryEvent;
+
+use JSON::Fast;
+use JSON::RepositoryEvent;
+
+plan 11;
+
+my $samples = $*PROGRAM.parent.sibling("samples");
+
+#for <Github Forgejo> -> $type {
+for <Github> -> $type {
+    my $io = $samples.add("$type.lc()-check-suite.json");
+
+    my $raw = JSON::RepositoryEvent(from-json $io.slurp);
+    isa-ok $raw, JSON::RepositoryEvent,
+      "$type: got a JSON::RepositoryEvent object";
+
+    my $payload = $raw.payload;
+    ok $payload.^name.starts-with("JSON::RepositoryEvent::"),
+      "$type: got a JSON::RepositoryEvent::xxx object";
+    
+    my $event = RepositoryEvent.new($payload);
+    ok $event.^name.starts-with("RepositoryEvent::"),
+      "$type: got a RepositoryEvent::xxx object";
+
+    is $event.repo-name, 'JSON-RepositoryEvent',
+      "$type: repository name is ok";
+    is $event.repo-full-name, 'lizmat/JSON-RepositoryEvent',
+      "$type: repository full-name is ok";
+    is $event.repo-stars, 0, "$type: is number of stars correct";
+    is $event.repo-issues, 0, "$type: is number of issues correct";
+
+    is $event.branch, "main", "$type: is branch correct";
+    ok $event.commit.chars == 40, "$type: is commit SHA correct";
+    is $event.conclusion, 'success', "$type: is conclusion correct";
+    is $event.name, 'GitHub Actions', "$type: is name correct";
+}
+
+# vim: expandtab shiftwidth=4

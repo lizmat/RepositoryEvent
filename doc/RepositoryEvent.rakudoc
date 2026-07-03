@@ -23,6 +23,18 @@ class, attempting to unify the information provided by different services
 
 =head1 SUBCLASSES
 
+=head2 RepositoryEvent::CheckSuite
+
+=head3 branch
+=head3 commit
+=head3 commit-url
+=head3 conclusion
+=head3 name
+=head3 repo-name
+=head3 repo-full-name
+=head3 repo-stars
+=head3 repo-issues
+
 =head2 RepositoryEvent::Commit
 
 Representing a commit in the repository.

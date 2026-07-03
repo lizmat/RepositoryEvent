@@ -23,11 +23,19 @@ my constant %can-be-simplified = <
 
 #- RepositoryEvent::Basics -----------------------------------------------------
 
-my role Basics {
+my role Basics {  # UNCOVERABLE
     has $.repo-full-name;
     has $.repo-issues;
     has $.repo-name;
     has $.repo-stars;
+}
+
+#- RepositoryEvent::CheckSuite -------------------------------------------------
+my class CheckSuite does Basics {
+    has $.branch;
+    has $.commit;
+    has $.conclusion;
+    has $.name;
 }
 
 #- RepositoryEvent::Commit -----------------------------------------------------
@@ -53,10 +61,10 @@ my class Commit {
 class Issues does Basics {
     has $.action;
     has $.assignee;
+    has $.number;
     has $.sender;
     has $.title;
     has $.url;
-#    method self-self { $!sender eq $!assignee }
 }
 
 #- RepositoryEvent::PullRequest ------------------------------------------------
@@ -107,9 +115,8 @@ method !push($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
     my $repository := $event.repository;
-    my $branch     := $event.ref.subst('refs/heads/');
 
-    %args<branch>      := $branch;
+    %args<branch> := my $branch := $event.ref.subst('refs/heads/');
     %args<compare-url> := $forgejo ?? $event.compare-url !! $event.compare;
 
     %args<commits> := eager $event.commits.map: -> $commit {
@@ -147,6 +154,34 @@ method !pull-request($event, $forgejo) {
     %args<url>    := $pull-request.html-url;
 
     PullRequest.new(|%args)
+}
+
+method !issues($event, $forgejo) {
+    my %args := self!basics($event, $forgejo);
+
+    my $issue := $event.issue;
+
+    %args<action>   := $event.action;
+    %args<assignee> := $issue.assignee.login;
+    %args<number>   := $issue.number;
+    %args<sender>   := $event.sender.login;
+    %args<title>    := $issue.title;
+    %args<url>      := $issue.html-url;
+
+    Issues.new(|%args)
+}
+
+method !check-suite($event, $forgejo) {
+    my %args := self!basics($event, $forgejo);
+
+    my $check-suite := $event.check-suite;
+
+    %args<branch>     := $check-suite.head-branch;
+    %args<commit>     := $check-suite.head-sha;
+    %args<conclusion> := $check-suite.conclusion;
+    %args<name>       := $check-suite.app.name;
+
+    CheckSuite.new(|%args)
 }
 
 # vim: expandtab shiftwidth=4

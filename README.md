@@ -23,6 +23,27 @@ The `RepositoryEvent` distribution provides a simplified interface to the object
 SUBCLASSES
 ==========
 
+RepositoryEvent::CheckSuite
+---------------------------
+
+### branch
+
+### commit
+
+### commit-url
+
+### conclusion
+
+### name
+
+### repo-name
+
+### repo-full-name
+
+### repo-stars
+
+### repo-issues
+
 RepositoryEvent::Commit
 -----------------------
 
