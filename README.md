@@ -26,6 +26,8 @@ SUBCLASSES
 RepositoryEvent::Commit
 -----------------------
 
+Representing a commit in the repository.
+
 ### added
 
 ### author
@@ -53,11 +55,42 @@ RepositoryEvent::Push
 
 Representing the push of one or more commits to a service.
 
-### compare-url
-
 ### branch
 
 ### commits
+
+### compare-url
+
+### repo-name
+
+### repo-full-name
+
+### repo-stars
+
+### repo-issues
+
+RepositoryEvent::PullRequest
+----------------------------
+
+Representing actions related to a Pull Request.
+
+### action;
+
+### login;
+
+### number;
+
+### repo-name
+
+### repo-full-name
+
+### repo-stars
+
+### repo-issues
+
+### title;
+
+### url;
 
 AUTHOR
 ======

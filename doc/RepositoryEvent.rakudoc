@@ -25,6 +25,8 @@ class, attempting to unify the information provided by different services
 
 =head2 RepositoryEvent::Commit
 
+Representing a commit in the repository.
+
 =head3 added
 =head3 author
 =head3 branch
@@ -48,6 +50,20 @@ Representing the push of one or more commits to a service.
 =head3 repo-full-name
 =head3 repo-stars
 =head3 repo-issues
+
+=head2 RepositoryEvent::PullRequest
+
+Representing actions related to a Pull Request.
+
+=head3 action;
+=head3 login;
+=head3 number;
+=head3 repo-name
+=head3 repo-full-name
+=head3 repo-stars
+=head3 repo-issues
+=head3 title;
+=head3 url;
 
 =head1 AUTHOR
 

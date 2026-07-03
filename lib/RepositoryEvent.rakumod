@@ -24,25 +24,25 @@ my constant %can-be-simplified = <
 #- RepositoryEvent::Basics -----------------------------------------------------
 
 my role Basics {
-    has $.repo-name;
     has $.repo-full-name;
-    has $.repo-stars;
     has $.repo-issues;
+    has $.repo-name;
+    has $.repo-stars;
 }
 
 #- RepositoryEvent::Commit -----------------------------------------------------
 my class Commit {
-    has $.sha;
-    has $.branch;
-    has $.timestamp;
-    has $.url;
-    has $.title;
-    has $.message;
-    has $.author;
-    has $.committer;
     has $.added;
+    has $.author;
+    has $.branch;
+    has $.committer;
+    has $.message;
     has $.modified;
     has $.removed;
+    has $.sha;
+    has $.timestamp;
+    has $.title;
+    has $.url;
 
     method files() {
         (|$!added, |$!modified, |$!removed).sort.squish
@@ -52,27 +52,27 @@ my class Commit {
 #- RepositoryEvent::Issues -----------------------------------------------------
 class Issues does Basics {
     has $.action;
-    has $.sender;
     has $.assignee;
-    has $.url;
+    has $.sender;
     has $.title;
+    has $.url;
 #    method self-self { $!sender eq $!assignee }
 }
 
 #- RepositoryEvent::PullRequest ------------------------------------------------
 class PullRequest does Basics {
     has $.action;
+    has $.login;
     has $.number;
-    has $.url;
     has $.title;
-    has $.sender;
+    has $.url;
 }
 
 #- RepositoryEvent::Push -------------------------------------------------------
 my class Push does Basics {
-    has $.compare-url;
     has $.branch;
     has @.commits;
+    has $.compare-url;
 }
 
 #- RepositoryEvent -------------------------------------------------------------
@@ -140,10 +140,11 @@ method !pull-request($event, $forgejo) {
 
     my $pull-request := $event.pull-request;
 
-    %args<sender> := $event.sender.login;
+    %args<action> := $event.action;
+    %args<login>  := $pull-request.user.login;
     %args<number> := $pull-request.number;
-    %args<url>    := $pull-request.html-url;
     %args<title>  := $pull-request.title;
+    %args<url>    := $pull-request.html-url;
 
     PullRequest.new(|%args)
 }

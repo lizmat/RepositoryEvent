@@ -6,8 +6,10 @@ use JSON::RepositoryEvent;
 
 plan 42;
 
+my $samples = $*PROGRAM.parent.sibling("samples");
+
 for <Github 5 Forgejo 3> -> $type, $modified {
-    my $io = $*PROGRAM.parent.sibling("samples").add("$type.lc()-push.json");
+    my $io = $samples.add("$type.lc()-push.json");
 
     my $raw = JSON::RepositoryEvent(from-json $io.slurp);
     isa-ok $raw, JSON::RepositoryEvent,
