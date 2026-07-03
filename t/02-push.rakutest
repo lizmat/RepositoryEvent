@@ -54,7 +54,7 @@ for <Github 5 Forgejo 3> -> $type, $modified {
     is-deeply +$commit.added, 0, "$type: no files added";
     is-deeply +$commit.modified, +$modified, "$type: $modified files modified";
     is-deeply +$commit.removed, 0, "$type: no files removed";
-    is-deeply +$commit.files, +$modified, "$type: $modified files affected";
+    is-deeply +$commit.affected, +$modified, "$type: $modified files affected";
 }
 
 # vim: expandtab shiftwidth=4

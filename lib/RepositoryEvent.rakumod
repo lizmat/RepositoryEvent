@@ -40,6 +40,7 @@ my class CheckSuite does Basics {
 
 #- RepositoryEvent::Commit -----------------------------------------------------
 my class Commit {
+    has $.affected;
     has $.added;
     has $.author;
     has $.branch;
@@ -51,10 +52,6 @@ my class Commit {
     has $.timestamp;
     has $.title;
     has $.url;
-
-    method files() {
-        (|$!added, |$!modified, |$!removed).sort.squish
-    }
 }
 
 #- RepositoryEvent::Issues -----------------------------------------------------
@@ -123,14 +120,19 @@ method !push($event, $forgejo) {
         my @lines  = $commit.message.lines;
         my $title := @lines.shift;
 
+        my @added    := $commit.added;
+        my @modified := $commit.modified;
+        my @removed  := $commit.removed;
+
         my %args;
-        %args<added>     := $commit.added;
+        %args<affected>  := eager (|@added, |@modified, |@removed).sort.squish;
+        %args<added>     := @added;
         %args<author>    := $commit.author.name;
         %args<branch>    := $branch;
         %args<committer> := $commit.committer.name;
         %args<message>   := @lines.join("\n").trim;
-        %args<modified>  := $commit.modified;
-        %args<removed>   := $commit.removed;
+        %args<modified>  := @modified;
+        %args<removed>   := @removed;
         %args<sha>       := $commit.id;
         %args<title>     := $title;
         %args<timestamp> := $commit.timestamp;

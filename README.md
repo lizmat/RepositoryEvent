@@ -26,92 +26,227 @@ SUBCLASSES
 RepositoryEvent::CheckSuite
 ---------------------------
 
+Status of a test-suite (usually a set of Github Actions). Provides these methods:
+
 ### branch
+
+The name of the branch that was being tested.
 
 ### commit
 
-### commit-url
+The SHA of the most recent commit that was being tested.
 
 ### conclusion
 
+The conclusion of running the test-suite: one of:
+
+  * success
+
+  * failure
+
+  * neutral
+
+  * cancelled
+
+  * timed_out
+
+  * action_required
+
+  * stale
+
 ### name
+
+The name of the test-suite (usually "GitHub Actions").
 
 ### repo-name
 
+The (short) name of the repository, excludes login name of the owner.
+
 ### repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
 
 ### repo-stars
 
+The number of stars the repository has gotten from users.
+
 ### repo-issues
+
+The number of open issues in the repository.
 
 RepositoryEvent::Commit
 -----------------------
 
-Representing a commit in the repository.
+Representing a commit in the repository. Provides these methods:
 
 ### added
 
+A `List` of filenames that were added in this commit.
+
+### affected
+
+A `List` of filenames that were affected by this commit (as in either added, modified or removed).
+
 ### author
+
+The name of the author.
 
 ### branch
 
+The name of the branch.
+
 ### committer
+
+The name of the person who added this commit to the repository.
 
 ### message
 
+The message of the commit (excluding the first line, which is considered to be the title).
+
 ### modified
+
+A `List` of filenames that were modified by this commit.
 
 ### removed
 
+A `List` of filenames that were removed by this commit.
+
 ### sha
+
+The SHA of the commit.
 
 ### timestamp
 
+A `DateTime` object indicating when the commit was added to the repository.
+
 ### title
 
+The title of the commit (as in the first line of the messaged).
+
 ### url
+
+The URL of the commit in the repository.
 
 RepositoryEvent::Push
 ---------------------
 
-Representing the push of one or more commits to a service.
+Representing the push of one or more commits to a service. Provides these methods:
 
 ### branch
 
+The name of the branch to which one or more commits were pushed.
+
 ### commits
+
+A `List` of one or more `RepositoryEvent::Commit` objects, one for each commit that was part of the push to the repository.
 
 ### compare-url
 
+The URL to see the changes that were made by this push to the repository.
+
 ### repo-name
+
+The (short) name of the repository, excludes login name of the owner.
 
 ### repo-full-name
 
+The (long) name of the repository, includes login name of the owner.
+
 ### repo-stars
 
+The number of stars the repository has gotten from users.
+
 ### repo-issues
+
+The number of open issues in the repository.
 
 RepositoryEvent::PullRequest
 ----------------------------
 
-Representing actions related to a Pull Request.
+Representing actions related to a Pull Request. Provides these methods:
 
-### action;
+### action
 
-### login;
+The action that was performed on the Pull Request. One of these:
 
-### number;
+  * assigned
+
+  * auto_merge_disabled
+
+  * auto_merge_enabled
+
+  * closed
+
+  * converted_to_draft
+
+  * demilestoned
+
+  * dequequed
+
+  * edited
+
+  * enqueued
+
+  * labeled
+
+  * locked
+
+  * milestoned
+
+  * opened
+
+  * ready_for_review
+
+  * reopened
+
+  * review_request_removed
+
+  * review_requested
+
+  * synchronize
+
+  * unassigned
+
+  * unlabeled
+
+  * unlocked
+
+### login
+
+The login name of the person doing the action on the Pull Request.
+
+### number
+
+The number of the Pull Request.
 
 ### repo-name
 
+The (short) name of the repository, excludes login name of the owner.
+
 ### repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
 
 ### repo-stars
 
+The number of stars the repository has gotten from users.
+
 ### repo-issues
 
-### title;
+The number of open issues in the repository.
 
-### url;
+### title
+
+The title of the Pull Request.
+
+### url
+
+The URL of the Pull Request.
+
+CREDITS
+=======
+
+This module has been inspired by some of the internals of [`Geth`](https://github.com/Raku/geth), developed by *Zoffix Znet*.
 
 AUTHOR
 ======

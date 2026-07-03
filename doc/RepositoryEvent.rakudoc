@@ -25,57 +25,203 @@ class, attempting to unify the information provided by different services
 
 =head2 RepositoryEvent::CheckSuite
 
+Status of a test-suite (usually a set of Github Actions).  Provides these
+methods:
+
 =head3 branch
+
+The name of the branch that was being tested.
+
 =head3 commit
-=head3 commit-url
+
+The SHA of the most recent commit that was being tested.
+
 =head3 conclusion
+
+The conclusion of running the test-suite: one of:
+
+=item success
+=item failure
+=item neutral
+=item cancelled
+=item timed_out
+=item action_required
+=item stale
+
 =head3 name
+
+The name of the test-suite (usually "GitHub Actions").
+
 =head3 repo-name
+
+The (short) name of the repository, excludes login name of the owner.
+
 =head3 repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
+
 =head3 repo-stars
+
+The number of stars the repository has gotten from users.
+
 =head3 repo-issues
+
+The number of open issues in the repository.
 
 =head2 RepositoryEvent::Commit
 
-Representing a commit in the repository.
+Representing a commit in the repository.  Provides these methods:
 
 =head3 added
+
+A C<List> of filenames that were added in this commit.
+
+=head3 affected
+
+A C<List> of filenames that were affected by this commit (as in either
+added, modified or removed).
+
 =head3 author
+
+The name of the author.
+
 =head3 branch
+
+The name of the branch.
+
 =head3 committer
+
+The name of the person who added this commit to the repository.
+
 =head3 message
+
+The message of the commit (excluding the first line, which is considered
+to be the title).
+
 =head3 modified
+
+A C<List> of filenames that were modified by this commit.
+
 =head3 removed
+
+A C<List> of filenames that were removed by this commit.
+
 =head3 sha
+
+The SHA of the commit.
+
 =head3 timestamp
+
+A C<DateTime> object indicating when the commit was added to the repository.
+
 =head3 title
+
+The title of the commit (as in the first line of the messaged).
+
 =head3 url
+
+The URL of the commit in the repository.
 
 =head2 RepositoryEvent::Push
 
-Representing the push of one or more commits to a service.
+Representing the push of one or more commits to a service.  Provides these
+methods:
 
 =head3 branch
+
+The name of the branch to which one or more commits were pushed.
+
 =head3 commits
+
+A C<List> of one or more C<RepositoryEvent::Commit> objects, one for each
+commit that was part of the push to the repository.
+
 =head3 compare-url
+
+The URL to see the changes that were made by this push to the repository.
+
 =head3 repo-name
+
+The (short) name of the repository, excludes login name of the owner.
+
 =head3 repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
+
 =head3 repo-stars
+
+The number of stars the repository has gotten from users.
+
 =head3 repo-issues
+
+The number of open issues in the repository.
 
 =head2 RepositoryEvent::PullRequest
 
-Representing actions related to a Pull Request.
+Representing actions related to a Pull Request.  Provides these methods:
 
-=head3 action;
-=head3 login;
-=head3 number;
+=head3 action
+
+The action that was performed on the Pull Request.  One of these:
+
+=item assigned
+=item auto_merge_disabled
+=item auto_merge_enabled
+=item closed
+=item converted_to_draft
+=item demilestoned
+=item dequequed
+=item edited
+=item enqueued
+=item labeled
+=item locked
+=item milestoned
+=item opened
+=item ready_for_review
+=item reopened
+=item review_request_removed
+=item review_requested
+=item synchronize
+=item unassigned
+=item unlabeled
+=item unlocked
+
+=head3 login
+
+The login name of the person doing the action on the Pull Request.
+
+=head3 number
+
+The number of the Pull Request.
+
 =head3 repo-name
+
+The (short) name of the repository, excludes login name of the owner.
+
 =head3 repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
+
 =head3 repo-stars
+
+The number of stars the repository has gotten from users.
+
 =head3 repo-issues
-=head3 title;
-=head3 url;
+
+The number of open issues in the repository.
+
+=head3 title
+
+The title of the Pull Request.
+
+=head3 url
+
+The URL of the Pull Request.
+
+=head1 CREDITS
+
+This module has been inspired by some of the internals of
+L<C<Geth>|https://github.com/Raku/geth>, developed by I<Zoffix Znet>.
 
 =head1 AUTHOR
 
