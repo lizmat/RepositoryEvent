@@ -340,29 +340,9 @@ The action performed on the issue comment.  One of:
 =item pinned
 =item unpinned
 
-=head3 number
+=head3 actor
 
-The issue number.
-
-=head3 repo-name
-
-The (short) name of the repository, excludes login name of the owner.
-
-=head3 repo-full-name
-
-The (long) name of the repository, includes login name of the owner.
-
-=head3 repo-stars
-
-The number of stars the repository has gotten from users.
-
-=head3 repo-issues
-
-The number of open issues in the repository.
-
-=head3 sender
-
-The sender of this event.
+The name of the person performing the action on the issue comment.
 
 =head3 title
 
@@ -371,10 +351,6 @@ The title of this issue comment.
 =head3 url
 
 The URL of this issue comment.
-
-=head3 user
-
-The user performing the action on this issue comment.
 
 =head2 RepositoryEvent::Issues
 
@@ -405,6 +381,30 @@ The action performed on the issue.  One of:
 =item unpinned
 =item untyped
 
+=head3 actor
+
+The person performing the action on the issue.
+
+=head3 number
+
+The issue number.
+
+=head3 repo-name
+
+The (short) name of the repository, excludes login name of the owner.
+
+=head3 repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
+
+=head3 repo-stars
+
+The number of stars the repository has gotten from users.
+
+=head3 repo-issues
+
+The number of open issues in the repository.
+
 =head3 assignee
 
 The name of the person the issue was assigned to (if applicable).
@@ -428,10 +428,6 @@ The number of stars the repository has gotten from users.
 =head3 repo-issues
 
 The number of open issues in the repository.
-
-=head3 sender
-
-The sender of this event.
 
 =head3 title
 

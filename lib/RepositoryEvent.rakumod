@@ -261,12 +261,11 @@ method !fork($event, $forgejo) {
 
 #- RepositoryEvent::IssueComment -----------------------------------------------
 my class IssueComment does Basics {
+    has $.actor;
     has $.action;
     has $.number;
-    has $.sender;
     has $.title;
     has $.url;
-    has $.user;
 }
 
 method !issue-comment($event, $forgejo) {
@@ -274,22 +273,21 @@ method !issue-comment($event, $forgejo) {
 
     my $issue := $event.issue;
 
+    %args<actor>  := $event.sender.login;
     %args<action> := $event.action;
     %args<number> := $issue.number;
-    %args<sender> := $event.sender.login;
     %args<title>  := $issue.title;
     %args<url>    := $issue.html-url;
-    %args<user>   := $event.comment.user.login;
 
     IssueComment.new(|%args)
 }
 
 #- RepositoryEvent::Issues -----------------------------------------------------
 my class Issues does Basics {
+    has $.actor;
     has $.action;
     has $.assignee;
     has $.number;
-    has $.sender;
     has $.title;
     has $.url;
 }
@@ -299,10 +297,10 @@ method !issues($event, $forgejo) {
 
     my $issue := $event.issue;
 
+    %args<actor>    := $event.sender.login;
     %args<action>   := $event.action;
     %args<assignee> := $issue.assignee.login;
     %args<number>   := $issue.number;
-    %args<sender>   := $event.sender.login;
     %args<title>    := $issue.title;
     %args<url>      := $issue.html-url;
 
@@ -431,10 +429,10 @@ method !push($event, $forgejo) {
 
 #- RepositoryEvent::Release ----------------------------------------------------
 my class Release does Basics {
+    has $.actor;
     has $.action;
     has @.assets;
     has $.author;
-    has $.sender;
 }
 
 method !release($event, $forgejo) {

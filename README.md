@@ -358,29 +358,9 @@ The action performed on the issue comment. One of:
 
   * unpinned
 
-### number
+### actor
 
-The issue number.
-
-### repo-name
-
-The (short) name of the repository, excludes login name of the owner.
-
-### repo-full-name
-
-The (long) name of the repository, includes login name of the owner.
-
-### repo-stars
-
-The number of stars the repository has gotten from users.
-
-### repo-issues
-
-The number of open issues in the repository.
-
-### sender
-
-The sender of this event.
+The name of the person performing the action on the issue comment.
 
 ### title
 
@@ -389,10 +369,6 @@ The title of this issue comment.
 ### url
 
 The URL of this issue comment.
-
-### user
-
-The user performing the action on this issue comment.
 
 RepositoryEvent::Issues
 -----------------------
@@ -443,6 +419,30 @@ The action performed on the issue. One of:
 
   * untyped
 
+### actor
+
+The person performing the action on the issue.
+
+### number
+
+The issue number.
+
+### repo-name
+
+The (short) name of the repository, excludes login name of the owner.
+
+### repo-full-name
+
+The (long) name of the repository, includes login name of the owner.
+
+### repo-stars
+
+The number of stars the repository has gotten from users.
+
+### repo-issues
+
+The number of open issues in the repository.
+
 ### assignee
 
 The name of the person the issue was assigned to (if applicable).
@@ -466,10 +466,6 @@ The number of stars the repository has gotten from users.
 ### repo-issues
 
 The number of open issues in the repository.
-
-### sender
-
-The sender of this event.
 
 ### title
 
