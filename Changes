@@ -2,5 +2,9 @@ Revision history for RepositoryEvent
 
 {{$NEXT}}
 
+0.0.2  2026-07-26T23:28:09+02:00
+    - Now covering all classes provided by
+      JSON::RepositoryEvent
+
 0.0.1  2026-07-03T17:03:47+02:00
     - Initial version
