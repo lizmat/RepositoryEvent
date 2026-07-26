@@ -19,7 +19,7 @@ The C<RepositoryEvent> distribution provides a simplified interface
 to the objects created by the
 L<C<JSON::RepositoryEvent>|https://raku.land/zef:lizmat/JSON::RepositoryEvent>
 class, attempting to unify the information provided by different services
-(currently C<GitHub> and C<Forgejo> (Codeberg) support is provided.
+(currently C<GitHub> and C<Forgejo> (Codeberg) support is provided).
 
 =head1 SUBCLASSES
 

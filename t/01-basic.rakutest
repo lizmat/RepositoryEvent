@@ -1,8 +1,25 @@
 use Test;
 use RepositoryEvent;
 
-plan 1;
+use JSON::Fast;
+use JSON::RepositoryEvent;
 
-pass "replace me";
+my @samples = $*PROGRAM.parent.sibling("samples").dir;
+
+plan 3 * @samples;
+
+for @samples.sort(*.basename) -> $io {
+    my $raw = JSON::RepositoryEvent(from-json $io.slurp);
+    isa-ok $raw, JSON::RepositoryEvent,
+      "got a JSON::RepositoryEvent object";
+
+    my $payload = $raw.payload;
+    ok $payload.^name.starts-with("JSON::RepositoryEvent::"),
+      "got a JSON::RepositoryEvent::xxx object";
+
+    my $event = RepositoryEvent.new($payload);
+    ok $event.^name.starts-with("RepositoryEvent::"),
+      "got a RepositoryEvent::xxx object";
+}
 
 # vim: expandtab shiftwidth=4
