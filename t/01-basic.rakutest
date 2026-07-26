@@ -9,6 +9,7 @@ my @samples = $*PROGRAM.parent.sibling("samples").dir;
 plan 3 * @samples;
 
 for @samples.sort(*.basename) -> $io {
+#    say $io.basename;
     my $raw = JSON::RepositoryEvent(from-json $io.slurp);
     isa-ok $raw, JSON::RepositoryEvent,
       "got a JSON::RepositoryEvent object";

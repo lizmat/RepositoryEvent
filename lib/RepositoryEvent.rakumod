@@ -84,12 +84,12 @@ my role Basics {  # UNCOVERABLE
 method !basics($event, $forgejo, $repository = $event.repository) {
     my %args;
 
-    %args<repo-name>      := $repository.name;
+    %args<repo-issues>    := $repository.open-issues-count;
     %args<repo-full-name> := $repository.full-name;
+    %args<repo-name>      := $repository.name;
     %args<repo-stars>     := $forgejo
                                ?? $repository.stars-count
                                !! $repository.stargazers-count;
-    %args<repo-issues>    := $repository.open-issues-count;
 
     %args
 }
@@ -111,7 +111,7 @@ method !check-run($event, $forgejo) {
 
     %args<action>       := $event.action;
     %args<completed-at> := $check-run.completed-at;
-    %args<conclusion>   := $check-run.conclusion;
+    %args<conclusion>   := $check-run.check-suite.conclusion;
     %args<name>         := $check-run.app.name;
     %args<sha>          := $check-run.head-sha;
     %args<started-at>   := $check-run.started-at;
@@ -146,9 +146,9 @@ method !check-suite($event, $forgejo) {
 
 #- RepositoryEvent::Comment ----------------------------------------------------
 my class Comment does Basics {
-    has $.type;
-    has $.html-url;
     has $.body;
+    has $.type;
+    has $.url;
 }
 
 method !comment($event, $forgejo, $type, $repository) {
@@ -182,8 +182,8 @@ my class Commit {
     has $.modified;
     has $.removed;
     has $.sha;
-    has $.timestamp;
     has $.title;
+    has $.updated-at;
     has $.url;
 }
 
@@ -196,30 +196,32 @@ method !commit($event, $forgejo) {
     my @removed  := $event.removed;
 
     my %args;
-    %args<affected>  := eager (|@added, |@modified, |@removed).sort.squish;
-    %args<added>     := @added;
-    %args<author>    := $event.author.name;
-    %args<branch>    := $*BRANCH // '';
-    %args<committer> := $event.committer.name;
-    %args<message>   := @lines.join("\n").trim;
-    %args<modified>  := @modified;
-    %args<removed>   := @removed;
-    %args<sha>       := $event.id;
-    %args<title>     := $title;
-    %args<timestamp> := $event.timestamp;
-    %args<url>       := $event.url;
+    %args<affected>   := eager (|@added, |@modified, |@removed).sort.squish;
+    %args<added>      := @added;
+    %args<author>     := $event.author.name;
+    %args<branch>     := $*BRANCH // '';
+    %args<committer>  := $event.committer.name;
+    %args<message>    := @lines.join("\n").trim;
+    %args<modified>   := @modified;
+    %args<removed>    := @removed;
+    %args<sha>        := $event.id;
+    %args<title>      := $title;
+    %args<updated-at> := $event.timestamp;
+    %args<url>        := $event.url;
 
     Commit.new(|%args)
 }
 
 #- RepositoryEvent::Create -----------------------------------------------------
 my class Create does Basics {
+    has $.name;
     has $.type;
 }
 
 method !create($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
+    %args<name> := $event.ref;
     %args<type> := $event.ref-type;
 
     Create.new(|%args)
@@ -227,12 +229,14 @@ method !create($event, $forgejo) {
 
 #- RepositoryEvent::Delete -----------------------------------------------------
 my class Delete does Basics {
+    has $.name;
     has $.type;
 }
 
 method !delete($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
+    %args<name> := $event.ref;
     %args<type> := $event.ref-type;
 
     Delete.new(|%args)
@@ -344,7 +348,10 @@ method !page($event, $forgejo) {
 }
 
 #- RepositoryEvent::Ping --- ---------------------------------------------------
-my class Ping does Basics { }
+my class Ping {
+    has $.repo-full-name;
+    has $.repo-name;
+}
 
 method !ping($event, $forgejo) {
     Ping.new(|self!basics($event, $forgejo))
@@ -403,6 +410,7 @@ method !pull-request-review-thread($event, $forgejo) {
 
 #- RepositoryEvent::Push -------------------------------------------------------
 my class Push does Basics {
+    has $.actor;
     has $.branch;
     has @.commits;
     has $.compare-url;
@@ -411,9 +419,12 @@ my class Push does Basics {
 method !push($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
+    my $pusher := $event.pusher;
+
+    %args<actor>       := $forgejo ?? $pusher.login !! $pusher.name;
     %args<branch>      := my $*BRANCH := $event.ref.subst('refs/heads/');
-    %args<compare-url> := $forgejo ?? $event.compare-url !! $event.compare;
     %args<commits>     := eager $event.commits.map: {self!commit($_, $forgejo)}
+    %args<compare-url> := $forgejo ?? $event.compare-url !! $event.compare;
 
     Push.new(|%args)
 }
@@ -432,9 +443,9 @@ method !release($event, $forgejo) {
     my $release := $event.release;
 
     %args<action> := $event.action;
+    %args<actor>  := $event.sender.login;
     %args<assets> := eager $release.assets.map: { self!asset($_, $forgejo) }
     %args<author> := $release.author.name;
-    %args<sender> := $event.sender.name;
 
     Release.new(|%args)
 }
@@ -442,12 +453,14 @@ method !release($event, $forgejo) {
 #- RepositoryEvent::Repository -------------------------------------------------
 my class Repository does Basics {
     has $.action;
+    has $.actor;
 }
 
 method !repository($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
     %args<action> := $event.action;
+    %args<actor>  := $event.sender.login;
 
     Repository.new(|%args)
 }
@@ -467,11 +480,10 @@ method !star($event, $forgejo) {
 
 #- RepositoryEvent::Status -----------------------------------------------------
 my class Status does Basics {
+    has $.actor;
     has $.author;
     has $.committer;
     has $.message;
-    has $.name;
-    has $.sender;
     has $.sha;
     has $.state;
     has $.title;
@@ -487,11 +499,10 @@ method !status($event, $forgejo) {
     my @lines    = $message ?? $message.lines !! '';
     my $title   := @lines.shift;
 
+    %args<actor>      := $event.sender.login;
     %args<author>     := $commit.author.name;
     %args<committer>  := $commit.committer.name;
     %args<message>    := @lines.join("\n").trim;
-    %args<name>       := $event.name;
-    %args<sender>     := $event.sender.login;
     %args<sha>        := $event.sha;
     %args<state>      := $event.state;
     %args<title>      := $title;
@@ -503,12 +514,14 @@ method !status($event, $forgejo) {
 
 #- RepositoryEvent::Watch ------------------------------------------------------
 my class Watch does Basics {
+    has $.actor;
     has $.action;
 }
 
 method !watch($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
+    %args<actor>  := $event.sender.login;
     %args<action> := $event.action;
 
     Watch.new(|%args)
@@ -516,25 +529,26 @@ method !watch($event, $forgejo) {
 
 #- RepositoryEvent::Wiki -------------------------------------------------------
 my class Wiki does Basics {
+    has $.actor;
     has @.pages;
-    has $.sender;
 }
 
 method !wiki($event, $forgejo) {
     my %args := self!basics($event, $forgejo);
 
-    %args<pages>  := eager $event.pages.map: { self!page($_, $forgejo) }
-    %args<sender> := $event.sender.login;
+    %args<actor> := $event.sender.login;
+    %args<pages> := eager $event.pages.map: { self!page($_, $forgejo) }
 
     Wiki.new(|%args)
 }
 
 #- RepositoryEvent::WorkflowJob ------------------------------------------------
 my class WorkflowJob does Basics {
+    has $.completed-at;
     has $.conclusion;
     has $.name;
     has $.sha;
-    has $.cmpleted-at;
+    has $.url;
 }
 
 method !workflow-job($event, $forgejo) {
@@ -542,10 +556,11 @@ method !workflow-job($event, $forgejo) {
 
     my $workflow-job := $event.workflow-job;
 
+    %args<completed-at> := $workflow-job.completed-at;
     %args<conclusion>   := $workflow-job.conclusion;
     %args<name>         := $workflow-job.app.name;
     %args<sha>          := $workflow-job.head-sha;
-    %args<completed-at> := $workflow-job.completed-at;
+    %args<url>          := $workflow-job.html-url;
 
     WorkflowJob.new(|%args)
 }
@@ -556,6 +571,7 @@ my class WorkflowRun does Basics {
     has $.name;
     has $.sha;
     has $.updated-at;
+    has $.url;
 }
 
 method !workflow-run($event, $forgejo) {
@@ -567,6 +583,7 @@ method !workflow-run($event, $forgejo) {
     %args<name>       := $workflow-run.app.name;
     %args<sha>        := $workflow-run.head-sha;
     %args<updated-at> := $workflow-run.updated-at;
+    %args<url>        := $workflow-run.html-url;
 
     WorkflowRun.new(|%args)
 }
