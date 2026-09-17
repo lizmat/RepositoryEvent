@@ -2,6 +2,9 @@ Revision history for RepositoryEvent
 
 {{$NEXT}}
 
+0.0.3  2026-09-17T19:32:27+02:00
+    - Up dependency to ready for RakuAST
+
 0.0.2  2026-07-26T23:28:09+02:00
     - Now covering all classes provided by
       JSON::RepositoryEvent

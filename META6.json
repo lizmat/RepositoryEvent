@@ -8,7 +8,7 @@
   "depends": {
     "test": {
       "requires": [
-        "JSON::Fast:ver<0.20.1+>:auth<zef:timo>",
+        "JSON::Fast:ver<0.21+>:auth<zef:timo>",
         "JSON::RepositoryEvent:ver<0.0.9+>:auth<zef:lizmat>"
       ]
     }
@@ -34,5 +34,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
